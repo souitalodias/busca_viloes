@@ -1,0 +1,13 @@
+# Arquivos de compilação do Maven
+target/
+
+# Arquivos de configuração do IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# Logs e arquivos do sistema operacional
+*.log
+.DS_Store
