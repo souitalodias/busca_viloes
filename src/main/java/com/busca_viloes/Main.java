@@ -1,17 +1,44 @@
 package com.busca_viloes;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-public class Main {
-    static void main() {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        IO.println(String.format("Hello and welcome!"));
+import com.busca_viloes.handler.SolicitacaoHandler;
+import com.busca_viloes.handler.VilaoHandler;
+import com.busca_viloes.repository.SolicitacaoRepository;
+import com.busca_viloes.repository.VilaoRepository;
+import com.sun.net.httpserver.HttpServer;
 
-        for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            IO.println("i = " + i);
+import java.net.InetSocketAddress;
+
+public class Main {
+    public static void main(String[] args) {
+        try {
+            // Porta onde a API vai escutar (http://localhost:8080)
+            int porta = 8080;
+            HttpServer server = HttpServer.create(new InetSocketAddress(porta), 0);
+
+            // Instancia os repositórios em memória
+            VilaoRepository vilaoRepository = new VilaoRepository();
+            SolicitacaoRepository solicitacaoRepository = new SolicitacaoRepository();
+
+            // Mapeia as rotas (endpoints) para seus respectivos Handlers
+            server.createContext("/api/viloes", new VilaoHandler(vilaoRepository));
+            server.createContext("/api/solicitacoes", new SolicitacaoHandler(solicitacaoRepository));
+
+            // Define o executor como nulo (usa o padrão do sistema)
+            server.setExecutor(null);
+
+            // Inicia o servidor HTTP
+            server.start();
+
+            System.out.println("=================================================");
+            System.out.println(" 🚀 SERVIDOR BUSCA VILÕES RODANDO NA PORTA " + porta);
+            System.out.println(" Endpoints disponíveis:");
+            System.out.println(" -> http://localhost:8080/api/viloes");
+            System.out.println(" -> http://localhost:8080/api/solicitacoes");
+            System.out.println("=================================================");
+
+        } catch (Exception e) {
+            System.err.println("Erro ao iniciar o servidor HTTP: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }
